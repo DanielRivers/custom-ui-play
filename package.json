@@ -20,7 +20,7 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "@kinde/infrastructure": "^0.7.2",
+    "@kinde/infrastructure": "^0.8.0",
     "react-dom": "^19.1.0"
   }
 }
