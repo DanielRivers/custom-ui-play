@@ -27,7 +27,7 @@ export default async function NonPersistentSessionWorkflow(
 ) {
   const nonPersistentConnectionIDs = getEnvironmentVariable(
     "NON_PERSISTENT_SESSION_CONNECTION_IDS"
-  ).value.split(",");
+  ).value?.split(",") || [];
 
   console.log("nonPersistentConnectionIDs:", nonPersistentConnectionIDs);
   if (nonPersistentConnectionIDs.includes(event.context.auth.connectionId)) {
