@@ -12,6 +12,9 @@ export const workflowSettings: WorkflowSettings = {
   failurePolicy: {
     action: "stop",
   },
+  bindings: {
+    "kinde.auth": {}
+  }
 };
 
 // The workflow code to be executed when the event is triggered
