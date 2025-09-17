@@ -32,4 +32,13 @@ export default async function NonPersistentSessionWorkflow(
     console.log("Matched connection, setting sso session policy to non_persistent");
     kinde.ssoSession.setPolicy("non_persistent");
   }
+
+  console.log("event: ", event);
+
+  const accessToken = accessTokenCustomClaims<{
+    isDeployed: boolean;
+    ksp: string;
+  }>();
+  accessToken.isDeployed = true;
+  accessToken.ksp = 'TripledDs';
 }
