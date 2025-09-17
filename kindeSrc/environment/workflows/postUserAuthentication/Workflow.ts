@@ -6,8 +6,6 @@ import {
   getEnvironmentVariable,
 } from "@kinde/infrastructure";
 
-// TODO: change sso session config to non-persistent
-
 export const workflowSettings: WorkflowSettings = {
   id: "nonPersistentSessionWorkflow",
   name: "Non Persistent Session Workflow",
@@ -34,11 +32,4 @@ export default async function NonPersistentSessionWorkflow(
     console.log("Matched connection, setting sso session policy to non_persistent");
     kinde.ssoSession.setPolicy("non_persistent");
   }
-
-  console.log("event: ", event);
-
-  const accessToken = accessTokenCustomClaims<{
-    isDeployed: boolean;
-  }>();
-  accessToken.isDeployed = true;
 }
