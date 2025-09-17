@@ -9,6 +9,9 @@ import {
 export const workflowSettings: WorkflowSettings = {
   id: "UserPreRegistration",
   trigger: WorkflowTrigger.UserPreRegistration,
+  failurePolicy: {
+    action: "stop",
+  },
 };
 
 // The workflow code to be executed when the event is triggered
