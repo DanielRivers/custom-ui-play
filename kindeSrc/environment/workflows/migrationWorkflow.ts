@@ -64,7 +64,7 @@ export default async function Workflow(event: any) {
 			],
 		}) as unknown as Record<string, string>
 	});
-  console.log('User created', userResponse.id);
+  console.log('User created reponse', userResponse);
 	const userId = userResponse.id;
 
   console.log('setting the password')
