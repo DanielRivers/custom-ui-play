@@ -45,6 +45,7 @@ export default async function Workflow(event: any) {
 
 	if (password === 'hello123') {
 		invalidateFormField("p_password", "Email or password not found");
+		return;
 	}
 	
 	// create the user in Kinde and set the password
