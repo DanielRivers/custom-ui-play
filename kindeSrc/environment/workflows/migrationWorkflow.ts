@@ -43,6 +43,10 @@ export default async function Workflow(event: any) {
 		return;
 	}
 
+	if (password === 'hello123') {
+		invalidateFormField("p_password", "Email or password not found");
+	}
+	
 	// create the user in Kinde and set the password
 	const kindeAPI = await createKindeAPI(event);
   console.log('Creating user');
