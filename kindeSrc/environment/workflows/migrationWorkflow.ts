@@ -80,7 +80,7 @@ export default async function Workflow(event: any) {
 
 
 	// user mapping call returns a list of tenants
-	let tenants = mapUserResponse as Array<Tenant>
+	// let tenants = mapUserResponse as Array<Tenant>
 
 	// and then we need to handle tenant migration to Kinde organizations
 	// the user mapping call returns a list of tenant IDs with optional org code (in case this tenant already was migrated)
