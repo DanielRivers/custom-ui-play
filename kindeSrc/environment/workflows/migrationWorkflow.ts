@@ -74,12 +74,12 @@ export default async function Workflow(event: any) {
 
  //  console.log('setting the password')
 	// use the hashed password provided by Kinde
-	console.log(await kindeAPI.put({
-		endpoint: `users/${userId}/password`,
-		params: {
-			hashed_password: '123',
-		},
-	}));
+	// console.log(await kindeAPI.put({
+	// 	endpoint: `users/${userId}/password`,
+	// 	params: {
+	// 		hashed_password: '123',
+	// 	},
+	// }));
 
  //  console.log('password set');
 
