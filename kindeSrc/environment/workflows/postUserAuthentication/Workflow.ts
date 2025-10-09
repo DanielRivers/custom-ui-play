@@ -14,6 +14,7 @@ export const workflowSettings: WorkflowSettings = {
     "kinde.accessToken": {},
     "kinde.ssoSession": {},
     "kinde.env": {},
+    "kinde.auth": {}
   },
   failurePolicy: {
     action: "stop",
