@@ -4,6 +4,7 @@ import {
   WorkflowTrigger,
   accessTokenCustomClaims,
   getEnvironmentVariable,
+  denyAccess,
 } from "@kinde/infrastructure";
 
 export const workflowSettings: WorkflowSettings = {
