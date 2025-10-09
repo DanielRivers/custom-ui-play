@@ -23,13 +23,15 @@ export const workflowSettings: WorkflowSettings = {
 export default async function NonPersistentSessionWorkflow(
   event: onUserTokenGeneratedEvent
 ) {
-  const nonPersistentConnectionIDs = getEnvironmentVariable(
-    "NON_PERSISTENT_SESSION_CONNECTION_IDS"
-  ).value?.split(",") || [];
+  denyAccess("Everyone is denied!")
 
-  console.log("nonPersistentConnectionIDs:", nonPersistentConnectionIDs);
-  if (nonPersistentConnectionIDs.includes(event.context.auth.connectionId)) {
-    console.log("Matched connection, setting sso session policy to non_persistent");
-    kinde.ssoSession.setPolicy("non_persistent");
-  }
+  // const nonPersistentConnectionIDs = getEnvironmentVariable(
+  //   "NON_PERSISTENT_SESSION_CONNECTION_IDS"
+  // ).value?.split(",") || [];
+
+  // console.log("nonPersistentConnectionIDs:", nonPersistentConnectionIDs);
+  // if (nonPersistentConnectionIDs.includes(event.context.auth.connectionId)) {
+  //   console.log("Matched connection, setting sso session policy to non_persistent");
+  //   kinde.ssoSession.setPolicy("non_persistent");
+  // }
 }
