@@ -25,7 +25,7 @@ export const workflowSettings: WorkflowSettings = {
 export default async function NonPersistentSessionWorkflow(
   event: onUserTokenGeneratedEvent
 ) {
-  denyAccess("Everyone is denied!")
+  // denyAccess("Everyone is denied!")
 
   // const nonPersistentConnectionIDs = getEnvironmentVariable(
   //   "NON_PERSISTENT_SESSION_CONNECTION_IDS"

@@ -36,5 +36,6 @@ interface Tenant {
 
 
 export default async function Workflow(event: any) {
-	console.log(event)	
+	console.log(event)
+	invalidateFormField('p_username', 'username format sucks, do better!')
 }
