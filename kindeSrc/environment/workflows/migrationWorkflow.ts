@@ -94,7 +94,7 @@ export default async function Workflow(event: onExistingPasswordProvidedEvent) {
                         type: 'email',
                         is_verified: true,
                         details: {
-                            email: 'daniel+migrated@danielrivers.com'
+                            email: providedEmail
                         }
                     }
                 ]
