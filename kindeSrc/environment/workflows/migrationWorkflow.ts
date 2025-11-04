@@ -1,129 +1,122 @@
 import {
-	WorkflowTrigger,
-	fetch,
-	secureFetch,
-	createKindeAPI,
-	getEnvironmentVariable,
-	invalidateFormField
-} from "@kinde/infrastructure";
+    createKindeAPI,
+    getEnvironmentVariable,
+    invalidateFormField,
+    onExistingPasswordProvidedEvent,
+    WorkflowSettings,
+    WorkflowTrigger,
+    fetch
+} from '@kinde/infrastructure';
 
-export const workflowSettings = {
-	id: "onExistingPasswordProvided",
-	name: 'User migration from AAD B2C',
-	trigger: WorkflowTrigger.ExistingPasswordProvided,
-	failurePolicy: {
-		action: "stop",
-	},
-	bindings: {
-		"kinde.widget": {}, // Required for accessing the UI
-		"kinde.env": {}, // required to access your environment variables
-		"kinde.fetch": {}, // Required for external and Kinde management API calls
-		"kinde.secureFetch": {}, // Required for external API calls
-		"url": {}, // required for url params
-	},
+export const workflowSettings: WorkflowSettings = {
+    id: 'noona-hq-user-migration',
+    name: 'Noona HQ User Migration',
+    trigger: WorkflowTrigger.ExistingPasswordProvided,
+    failurePolicy: {
+        action: 'stop'
+    },
+    bindings: {
+        'kinde.widget': {}, // Required for accessing the UI
+        'kinde.env': {}, // required to access your environment variables
+        'kinde.fetch': {}, // Required for management API calls
+        'kinde.mfa': {}, // Required for MFA
+        url: {} // required for url params
+    }
 };
 
-interface RopcResponse {
-	given_name?: string
-	family_name?: string
-	user_id: string
-}
-interface Tenant {
-	Id: string
-	Name: string
-	KindeOrganizationCode?: string
-}
+type UserDataResponse = {
+    name: string;
+    email_verified: boolean;
+};
 
+// The workflow code to be executed when the event is triggered
+export default async function Workflow(event: onExistingPasswordProvidedEvent) {
+    const { hashedPassword, providedEmail, password, hasUserRecordInKinde } = event.context.auth;
+    if (hasUserRecordInKinde) {
+        console.log('User exists in Kinde');
+        return;
+    }
 
-export default async function Workflow(event: any) {
-	const { hashedPassword, providedEmail, password, hasUserRecordInKinde } = event.context.auth;
+    console.log('Password: ', password);
 
-	if (hasUserRecordInKinde) {
-    console.log('found user already, aborting');
-		return;
-	}
+    console.log('User does not exist in Kinde');
 
-	if (password === 'hello123') {
-		invalidateFormField("p_password", "Email or password not found");
-		return;
-	}
-	
-	// create the user in Kinde and set the password
-	const kindeAPI = await createKindeAPI(event);
-  console.log('Creating user');
-	const { data: userResponse } = await kindeAPI.post({
-		endpoint: `user`,
-		params: JSON.stringify({
-			profile: {
-				given_name: 'Test',
-				family_name: 'Daniel',
-			},
-			identities: [
-				{
-					type: "email",
-					details: {
-						email: providedEmail,
-					},
-					is_verified: true
-				},
-			],
-		}) as unknown as Record<string, string>
-	});
-  console.log('User created reponse', userResponse);
-	const userId = userResponse.id;
+    try {
+        // The URL of the API you want to send the payload to
+        // const CHECK_PASSWORD_API_URL = getEnvironmentVariable('CHECK_PASSWORD_API_URL')?.value;
 
- //  console.log('setting the password')
-	// use the hashed password provided by Kinde
-	console.log(await kindeAPI.put({
-		endpoint: `users/${userId}/password`,
-		params: {
-			hashed_password: hashedPassword,
-		},
-	}));
+        // if (!CHECK_PASSWORD_API_URL) {
+        //     throw Error('Endpoint not set');
+        // }
 
- //  console.log('password set');
+        // The payload you want to send
+        // const payload = {
+        //     email: providedEmail,
+        //     password: password
+        // };
 
+        // console.log(`Looking up user by email at ${CHECK_PASSWORD_API_URL}`);
+        // console.log('payload: ', payload);
 
-	// user mapping call returns a list of tenants
-	// let tenants = mapUserResponse as Array<Tenant>
+        // const { data: userData } = await fetch(CHECK_PASSWORD_API_URL, {
+        //     method: 'POST',
+        //     headers: { 'content-type': 'application/json' },
+        //     body: JSON.stringify(payload)
+        // });
 
-	// and then we need to handle tenant migration to Kinde organizations
-	// the user mapping call returns a list of tenant IDs with optional org code (in case this tenant already was migrated)
-	// for (let tenant of tenants) {
-	// 	if (!tenant.KindeOrganizationCode) {
-	// 		// if no org code -> create new org for tenant and send its mapping data again to our API for mapping
-	// 		const { data: orgResponse } = await kindeAPI.post({
-	// 			endpoint: 'organization',
-	// 			params: {
-	// 				name: tenant.Name, // use tenant name
-	// 				external_id: tenant.Id // use tenant id
-	// 			}
-	// 		})
+        // if (!userData) {
+        //     // If the email/password is not verified in the external system, you can invalidate the form field
+        //     invalidateFormField('p_password', 'Email or password not found');
+        //     return;
+        // }
 
-	// 		await fetch(LP_API_MAP_TENANT_URL, {
-	// 			method: "POST",
-	// 			responseFormat: "text",
-	// 			headers: {
-	// 				"Content-Type": "application/json",
-	// 				"Authorization": "Basic " + LP_API_AUTH_BASE64
-	// 			},
-	// 			body: JSON.stringify({
-	// 				kindeOrganizationCode: orgResponse.organization.code,
-	// 				esecTenantId: tenant.Id
-	// 			}) as unknown as URLSearchParams
-	// 		})
+        // Password is verified in the external system
 
-	// 		tenant.KindeOrganizationCode = orgResponse.organization.code
-	// 	}
+        // You can create the user in Kinde and set the password
+        const kindeAPI = await createKindeAPI(event);
 
-	// 	// finally use created or sent org code to add Kinde user to org
-	// 	await kindeAPI.post({
-	// 		endpoint: `organizations/${tenant.KindeOrganizationCode}/users`,
-	// 		params: JSON.stringify({
-	// 			users: [
-	// 				{ id: userId }
-	// 			]
-	// 		}) as unknown as Record<string, string>
-	// 	})
-	// }
+        // Create the user in Kinde
+
+        // You can use the userData from the external system to populate the Kinde user
+        // console.log(`Creating user in Kinde and user data from external system ${JSON.stringify(userData)}`);
+
+        // const nameParts = userData.name.split(' ');
+
+        const { data: res } = await kindeAPI.post({
+            endpoint: `user`,
+            params: {
+                profile: {
+                    given_name: 'daniel',
+                    family_name: 'migrate'
+                },
+                identities: [
+                    {
+                        type: 'email',
+                        is_verified: true,
+                        details: {
+                            email: 'daniel+migrated@danielrivers.com'
+                        }
+                    }
+                ]
+            }
+        });
+
+        const userId = res.id;
+
+        // Set the password for the user in Kinde
+        // You can use the hashed password provided by Kinde
+        console.log(`Setting password for user with ID ${userId}`);
+
+        const { data: pwdRes } = await kindeAPI.put({
+            endpoint: `users/${userId}/password`,
+            params: {
+                hashed_password: hashedPassword
+            }
+        });
+
+        console.log(pwdRes.message);
+    } catch (err: any) {
+        const safeErr = JSON.stringify(err, Object.getOwnPropertyNames(err));
+        console.error('create user failed:', safeErr);
+    }
 }
