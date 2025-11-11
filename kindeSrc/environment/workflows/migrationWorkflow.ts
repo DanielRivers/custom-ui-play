@@ -5,7 +5,8 @@ import {
     onExistingPasswordProvidedEvent,
     WorkflowSettings,
     WorkflowTrigger,
-    fetch
+    fetch,
+	denyAccess
 } from '@kinde/infrastructure';
 
 export const workflowSettings: WorkflowSettings = {
@@ -31,6 +32,7 @@ type UserDataResponse = {
 
 // The workflow code to be executed when the event is triggered
 export default async function Workflow(event: onExistingPasswordProvidedEvent) {
+	denyAccess("nope!")
 	console.log(event.context)
     const { hashedPassword, providedEmail, password, hasUserRecordInKinde } = event.context.auth;
     if (hasUserRecordInKinde) {
