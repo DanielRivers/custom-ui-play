@@ -33,93 +33,93 @@ type UserDataResponse = {
 // The workflow code to be executed when the event is triggered
 export default async function Workflow(event: onExistingPasswordProvidedEvent) {
 	denyAccess("nope!")
-	console.log(event.context)
-    const { hashedPassword, providedEmail, password, hasUserRecordInKinde } = event.context.auth;
-    if (hasUserRecordInKinde) {
-        console.log('User exists in Kinde');
-        return;
-    }
+	// console.log(event.context)
+ //    const { hashedPassword, providedEmail, password, hasUserRecordInKinde } = event.context.auth;
+ //    if (hasUserRecordInKinde) {
+ //        console.log('User exists in Kinde');
+ //        return;
+ //    }
 
-    console.log('Password: ', password);
+ //    console.log('Password: ', password);
 
-    console.log('User does not exist in Kinde');
+ //    console.log('User does not exist in Kinde');
 
-    try {
-        // The URL of the API you want to send the payload to
-        // const CHECK_PASSWORD_API_URL = getEnvironmentVariable('CHECK_PASSWORD_API_URL')?.value;
+ //    try {
+ //        // The URL of the API you want to send the payload to
+ //        // const CHECK_PASSWORD_API_URL = getEnvironmentVariable('CHECK_PASSWORD_API_URL')?.value;
 
-        // if (!CHECK_PASSWORD_API_URL) {
-        //     throw Error('Endpoint not set');
-        // }
+ //        // if (!CHECK_PASSWORD_API_URL) {
+ //        //     throw Error('Endpoint not set');
+ //        // }
 
-        // The payload you want to send
-        // const payload = {
-        //     email: providedEmail,
-        //     password: password
-        // };
+ //        // The payload you want to send
+ //        // const payload = {
+ //        //     email: providedEmail,
+ //        //     password: password
+ //        // };
 
-        // console.log(`Looking up user by email at ${CHECK_PASSWORD_API_URL}`);
-        // console.log('payload: ', payload);
+ //        // console.log(`Looking up user by email at ${CHECK_PASSWORD_API_URL}`);
+ //        // console.log('payload: ', payload);
 
-        // const { data: userData } = await fetch(CHECK_PASSWORD_API_URL, {
-        //     method: 'POST',
-        //     headers: { 'content-type': 'application/json' },
-        //     body: JSON.stringify(payload)
-        // });
+ //        // const { data: userData } = await fetch(CHECK_PASSWORD_API_URL, {
+ //        //     method: 'POST',
+ //        //     headers: { 'content-type': 'application/json' },
+ //        //     body: JSON.stringify(payload)
+ //        // });
 
-        // if (!userData) {
-        //     // If the email/password is not verified in the external system, you can invalidate the form field
-        //     invalidateFormField('p_password', 'Email or password not found');
-        //     return;
-        // }
+ //        // if (!userData) {
+ //        //     // If the email/password is not verified in the external system, you can invalidate the form field
+ //        //     invalidateFormField('p_password', 'Email or password not found');
+ //        //     return;
+ //        // }
 
-        // Password is verified in the external system
+ //        // Password is verified in the external system
 
-        // You can create the user in Kinde and set the password
-        const kindeAPI = await createKindeAPI(event);
+ //        // You can create the user in Kinde and set the password
+ //        const kindeAPI = await createKindeAPI(event);
 
-        // Create the user in Kinde
+ //        // Create the user in Kinde
 
-        // You can use the userData from the external system to populate the Kinde user
-        // console.log(`Creating user in Kinde and user data from external system ${JSON.stringify(userData)}`);
+ //        // You can use the userData from the external system to populate the Kinde user
+ //        // console.log(`Creating user in Kinde and user data from external system ${JSON.stringify(userData)}`);
 
-        // const nameParts = userData.name.split(' ');
+ //        // const nameParts = userData.name.split(' ');
 
-        const { data: res } = await kindeAPI.post({
-            endpoint: `user`,
-            params: {
-                profile: {
-                    given_name: 'daniel',
-                    family_name: 'migrate'
-                },
-                identities: [
-                    {
-                        type: 'email',
-                        is_verified: true,
-                        details: {
-                            email: providedEmail
-                        }
-                    }
-                ]
-            }
-        });
+ //        const { data: res } = await kindeAPI.post({
+ //            endpoint: `user`,
+ //            params: {
+ //                profile: {
+ //                    given_name: 'daniel',
+ //                    family_name: 'migrate'
+ //                },
+ //                identities: [
+ //                    {
+ //                        type: 'email',
+ //                        is_verified: true,
+ //                        details: {
+ //                            email: providedEmail
+ //                        }
+ //                    }
+ //                ]
+ //            }
+ //        });
 
-        const userId = res.id;
+ //        const userId = res.id;
 
-        // Set the password for the user in Kinde
-        // You can use the hashed password provided by Kinde
-        console.log(`Setting password for user with ID ${userId}`);
+ //        // Set the password for the user in Kinde
+ //        // You can use the hashed password provided by Kinde
+ //        console.log(`Setting password for user with ID ${userId}`);
 
-        const { data: pwdRes } = await kindeAPI.put({
-            endpoint: `users/${userId}/password`,
-            params: {
-                hashed_password: hashedPassword
-            }
-        });
+ //        const { data: pwdRes } = await kindeAPI.put({
+ //            endpoint: `users/${userId}/password`,
+ //            params: {
+ //                hashed_password: hashedPassword
+ //            }
+ //        });
 
-        console.log(pwdRes.message);
-    } catch (err: any) {
-        const safeErr = JSON.stringify(err, Object.getOwnPropertyNames(err));
-        console.error('create user failed:', safeErr);
-    }
+ //        console.log(pwdRes.message);
+ //    } catch (err: any) {
+ //        const safeErr = JSON.stringify(err, Object.getOwnPropertyNames(err));
+ //        console.error('create user failed:', safeErr);
+ //    }
 }
