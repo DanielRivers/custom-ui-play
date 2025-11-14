@@ -15,6 +15,6 @@ export const workflowSettings = {
 };
 
 export default async function Workflow(event: any) {
-	denyAccess("Nope Username")
-	//invalidateFormField('p_username', 'username format sucks, do better!')
+	// denyAccess("Nope Username")
+	invalidateFormField('p_username', 'username format sucks, do better!')
 }
