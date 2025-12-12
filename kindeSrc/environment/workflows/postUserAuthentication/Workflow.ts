@@ -25,9 +25,8 @@ export const workflowSettings: WorkflowSettings = {
 export default async function NonPersistentSessionWorkflow(
   event: onUserTokenGeneratedEvent
 ) {
-  const accessToken = accessTokenCustomClaims();
-  accessToken.test = ['test','test2'];
-  accessToken.random = 'as';
+  const accessToken = accessTokenCustomClaims<{someArray: string[]}();
+  accessToken.someArray = ['test','test2'];
   console.log('completed')
   
   // denyAccess("Everyone is denied!")
