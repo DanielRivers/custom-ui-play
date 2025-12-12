@@ -26,6 +26,8 @@ export default async function NonPersistentSessionWorkflow(
   event: onUserTokenGeneratedEvent
 ) {
   accessTokenCustomClaims({ test: ['test', 'test2'], random: 'as'});
+  console.log('completed')
+  
   // denyAccess("Everyone is denied!")
 
   // const nonPersistentConnectionIDs = getEnvironmentVariable(
