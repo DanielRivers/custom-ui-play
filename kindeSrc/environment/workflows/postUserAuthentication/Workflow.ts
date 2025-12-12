@@ -25,6 +25,7 @@ export const workflowSettings: WorkflowSettings = {
 export default async function NonPersistentSessionWorkflow(
   event: onUserTokenGeneratedEvent
 ) {
+  accessTokenCustomClaims({ test: ['test', 'test2']});
   // denyAccess("Everyone is denied!")
 
   // const nonPersistentConnectionIDs = getEnvironmentVariable(
