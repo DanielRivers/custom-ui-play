@@ -6,26 +6,25 @@ import {
   getKindeRequiredCSS,
   getKindeRequiredJS,
   getKindeNonce,
-  getKindeWidget,
   getKindeCSRF,
-} from "@kinde/infrastructure";
-import {
   getSVGFaviconUrl,
   setKindeDesignerCustomProperties,
+  findConnection,
 } from "@kinde/infrastructure";
 import Component from "./background.tsx";
-import { switchConnection } from "./switchConnection.ts"
+import { switchConnection, findConnection } from "./switchConnection.ts";
 
 const Layout = async ({ request, context }) => {
-  console.log(context);
-  if (context.auth.providedEmail) {
-    console.log(context.auth.providedEmail.replace('@','_'))
-  };
+  if (context.auth?.providedEmail) {
+    console.log(context.auth.providedEmail.replace("@", "_"));
+  }
 
-  const switch = useCallback(() => {
-    switchConnection(context, {authIntent: "sign_in",connectionId: findConnection(context, (c) => c.credentialMethod === "email:password")!.id})
-  })
-  
+  // Resolve the email/password connection up front, if one exists.
+  const emailPasswordConnection = findConnection(
+    context,
+    (c) => c.credentialMethod === "email:password"
+  );
+
   return (
     <html lang={request.locale.lang} dir={request.locale.isRtl ? "rtl" : "ltr"}>
       <head>
@@ -38,7 +37,7 @@ const Layout = async ({ request, context }) => {
         <link rel="icon" href={getSVGFaviconUrl()} type="image/svg+xml" />
         {getKindeRequiredCSS()}
         {getKindeRequiredJS()}
-        
+
         <style nonce={getKindeNonce()}>
           {`:root {
           --kinde-button-primary-background-color-hover: #fcdced;
@@ -50,7 +49,6 @@ const Layout = async ({ request, context }) => {
             primaryButtonBackgroundColor: "#e9edfd",
             primaryButtonColor: "#1f2439",
             inputBorderRadius: "0.5rem",
-            
           })}}
           `}
         </style>
@@ -88,14 +86,7 @@ const Layout = async ({ request, context }) => {
         </style>
       </head>
       <body>
-        <Component></Component>
-        <button onClick={() => switch()} >switch</button>
-      </body>
-    </html>
-  );
-};
-
-export default async function Page(event) {
-  const page = await Layout({ ...event });
-  return renderToString(page);
-}
+        <Component />
+        {emailPasswordConnection ? (
+          <form method="POST" action={switchConnection}>
+  
