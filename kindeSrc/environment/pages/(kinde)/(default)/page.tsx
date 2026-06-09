@@ -16,6 +16,7 @@ import {
 import Component from "./background.tsx";
 
 const Layout = async ({ request, context }) => {
+  console.log(context);
   return (
     <html lang={request.locale.lang} dir={request.locale.isRtl ? "rtl" : "ltr"}>
       <head>
