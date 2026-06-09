@@ -27,6 +27,8 @@ const Layout = async ({ request, context }) => {
     (c) => c.credentialMethod === "email:password"
   );
 
+  console.log('emailpassword', emailPasswordConnection);
+
   return (
     <html lang={request.locale.lang} dir={request.locale.isRtl ? "rtl" : "ltr"}>
       <head>
