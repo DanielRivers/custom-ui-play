@@ -89,4 +89,26 @@ const Layout = async ({ request, context }) => {
         <Component />
         {emailPasswordConnection ? (
           <form method="POST" action={switchConnection}>
-  
+            <input type="hidden" name="csrfToken" value={getKindeCSRF()} />
+            <input
+              type="hidden"
+              name="authIntent"
+              value="sign_in"
+            />
+            <input
+              type="hidden"
+              name="connectionId"
+              value={emailPasswordConnection.id}
+            />
+            <button type="submit">switch</button>
+          </form>
+        ) : null}
+      </body>
+    </html>
+  );
+};
+
+export default async function Page(event) {
+  const page = await Layout({ ...event });
+  return renderToString(page);
+}
