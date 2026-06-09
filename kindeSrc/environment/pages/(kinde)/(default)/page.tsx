@@ -19,6 +19,8 @@ const Layout = async ({ request, context }) => {
     console.log(context.auth.providedEmail.replace("@", "_"));
   }
 
+  console.log(context)
+  
   // Resolve the email/password connection up front, if one exists.
   const emailPasswordConnection = findConnection(
     context,
