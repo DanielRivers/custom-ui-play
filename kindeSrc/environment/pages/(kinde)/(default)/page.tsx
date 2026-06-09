@@ -14,7 +14,7 @@ import {
   setKindeDesignerCustomProperties,
 } from "@kinde/infrastructure";
 import Component from "./background.tsx";
-import { switchConnection } from './switchConnection.ts"
+import { switchConnection } from "./switchConnection.ts"
 
 const Layout = async ({ request, context }) => {
   console.log(context);
