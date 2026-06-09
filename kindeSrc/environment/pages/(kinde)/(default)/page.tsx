@@ -17,7 +17,9 @@ import Component from "./background.tsx";
 
 const Layout = async ({ request, context }) => {
   console.log(context);
-  context.auth.providedEmail ?? console.log(context.auth.providedEmail.replace('@','_'));
+  if (context.auth.providedEmail) {
+    console.log(context.auth.providedEmail.replace('@','_'))
+  };
   return (
     <html lang={request.locale.lang} dir={request.locale.isRtl ? "rtl" : "ltr"}>
       <head>
