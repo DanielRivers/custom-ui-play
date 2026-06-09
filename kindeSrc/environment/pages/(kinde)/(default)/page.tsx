@@ -14,12 +14,18 @@ import {
   setKindeDesignerCustomProperties,
 } from "@kinde/infrastructure";
 import Component from "./background.tsx";
+import { switchConnection } from './switchConnection.ts"
 
 const Layout = async ({ request, context }) => {
   console.log(context);
   if (context.auth.providedEmail) {
     console.log(context.auth.providedEmail.replace('@','_'))
   };
+
+  const switch = useCallback(() => {
+    switchConnection(context, {authIntent: "sign_in",connectionId: findConnection(context, (c) => c.credentialMethod === "email:password")!.id})
+  })
+  
   return (
     <html lang={request.locale.lang} dir={request.locale.isRtl ? "rtl" : "ltr"}>
       <head>
@@ -83,6 +89,7 @@ const Layout = async ({ request, context }) => {
       </head>
       <body>
         <Component></Component>
+        <button onClick={() => switch()} >switch</button>
       </body>
     </html>
   );
