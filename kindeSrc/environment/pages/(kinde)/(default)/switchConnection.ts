@@ -1,5 +1,5 @@
-type AuthIntent = "sign_in" | "sign_up";
-type SwitchConnectionAction = {
+export type AuthIntent = "sign_in" | "sign_up";
+export type SwitchConnectionAction = {
   path: string;
   method: "POST";
   fields: {
@@ -11,7 +11,7 @@ type SwitchConnectionAction = {
     isMarketingOptIn?: string;
   };
 };
-type AvailableConnection = {
+export type AvailableConnection = {
   id: string;
   friendlyId?: string;
   name: string;
@@ -21,7 +21,7 @@ type AvailableConnection = {
   provider?: string;
   logoName?: string;
 };
-type PageContext = {
+export type PageContext = {
   auth?: {
     providedEmail?: string;
     loginHint?: string;
@@ -43,7 +43,7 @@ type PageContext = {
     switchConnection?: SwitchConnectionAction;
   };
 };
-type SwitchConnectionOptions = {
+export type SwitchConnectionOptions = {
   /** `authentication_connections.id` or `friendlyId` from `connections.available` */
   connectionId: string;
   authIntent: AuthIntent;
@@ -52,7 +52,7 @@ type SwitchConnectionOptions = {
   isClickWrapAccepted?: boolean;
   isMarketingOptIn?: boolean;
 };
-type PostRoast = (
+export type PostRoast = (
   path: string,
   body: FormData | URLSearchParams
 ) => Promise<Response>;
@@ -115,6 +115,107 @@ export async function switchConnection(
   }
   return postRoast(action.path, body);
 }
+
+/**
+ * Client-side helper to perform the same switch connection POST from the browser
+ * without requiring a form element. Uses `fetch` and includes credentials.
+ */
+export async function switchConnectionClient(
+  action: SwitchConnectionAction,
+  psid: string,
+  options: SwitchConnectionOptions
+): Promise<void> {
+  if (!action) {
+    throw new Error("switchConnection action is required");
+  }
+  if (!psid) {
+    throw new Error("psid is required");
+  }
+  if (!options.connectionId) {
+    throw new Error("connectionId is required");
+  }
+  if (options.authIntent !== "sign_in" && options.authIntent !== "sign_up") {
+    throw new Error('authIntent must be "sign_in" or "sign_up"');
+  }
+
+  const form = document.createElement("form");
+  form.method = "POST";
+  form.action = action.path;
+  form.style.display = "none";
+
+  const appendField = (name: string, value: string) => {
+    const input = document.createElement("input");
+    input.type = "hidden";
+    input.name = name;
+    input.value = value;
+    form.appendChild(input);
+  };
+
+  appendField(action.fields.psid, psid);
+  appendField(action.fields.connectionId, options.connectionId);
+  appendField(action.fields.authIntent, options.authIntent);
+
+  if (options.loginHint) {
+    appendField(action.fields.loginHint, options.loginHint);
+  }
+  if (action.fields.isClickWrapAccepted && options.isClickWrapAccepted !== undefined) {
+    appendField(action.fields.isClickWrapAccepted, String(options.isClickWrapAccepted));
+  }
+  if (action.fields.isMarketingOptIn && options.isMarketingOptIn !== undefined) {
+    appendField(action.fields.isMarketingOptIn, String(options.isMarketingOptIn));
+  }
+
+  document.body.appendChild(form);
+  form.submit();
+}
+
+export type SwitchConnectionClientDefaults = {
+  connectionId: string;
+  authIntent: AuthIntent;
+  loginHint?: string | null;
+};
+
+export function getSwitchConnectionClientScript(
+  action: SwitchConnectionAction,
+  psid: string,
+  defaults: SwitchConnectionClientDefaults
+): string {
+  return `(() => {
+    const action = ${JSON.stringify(action)};
+    const psid = ${JSON.stringify(psid)};
+    const defaultConnectionId = ${JSON.stringify(defaults.connectionId)};
+    const defaultAuthIntent = ${JSON.stringify(defaults.authIntent)};
+    const defaultLoginHint = ${JSON.stringify(defaults.loginHint ?? null)};
+
+    window.kindeSwitchConnection = async function(options = {}) {
+      const opts = Object.assign({ connectionId: defaultConnectionId, authIntent: defaultAuthIntent, loginHint: defaultLoginHint }, options || {});
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = action.path;
+      form.style.display = 'none';
+
+      const appendField = (name, value) => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = name;
+        input.value = value;
+        form.appendChild(input);
+      };
+
+      appendField(action.fields.psid, psid);
+      appendField(action.fields.connectionId, opts.connectionId);
+      appendField(action.fields.authIntent, opts.authIntent);
+      if (opts.loginHint) appendField(action.fields.loginHint, opts.loginHint);
+
+      document.body.appendChild(form);
+      form.submit();
+    };
+
+    const btn = document.getElementById('kinde-switch-connection');
+    if (btn) btn.addEventListener('click', () => { window.kindeSwitchConnection().catch(err => console.error('switch connection failed', err)); });
+  })();`;
+}
+
 /** Find a connection from `context.connections.available` */
 export function findConnection(
   context: PageContext,

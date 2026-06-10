@@ -10,8 +10,9 @@ import {
   getSVGFaviconUrl,
   setKindeDesignerCustomProperties
 } from "@kinde/infrastructure";
-import Component from "./background.tsx";
-import { findConnection } from "./switchConnection.ts";
+import Component from "./background";
+import SwitchConnectionButton from "./switchConnectionButton";
+import { findConnection } from "./switchConnection";
 
 const Layout = async ({ request, context }) => {
   if (context.auth?.providedEmail) {
@@ -91,15 +92,13 @@ const Layout = async ({ request, context }) => {
       <body>
         <Component />
         {emailPasswordConnection && context.actions?.switchConnection && context.session?.pipelineStepId ? (
-          <form action="/authentication/switch_connection" className="kinde-form" data-kinde-form="true" method="post" name="switch">
-            <input type="hidden" name={context.actions.switchConnection.fields.psid} value={context.session.pipelineStepId} />
-            <input type="hidden" name={context.actions.switchConnection.fields.connectionId} value={emailPasswordConnection.id} />
-            <input type="hidden" name={context.actions.switchConnection.fields.authIntent} value="sign_up" />
-            {context.auth?.providedEmail ? (
-              <input type="hidden" name={context.actions.switchConnection.fields.loginHint} value={context.auth.providedEmail} />
-            ) : null}
-            <button type="submit">switch</button>
-          </form>
+          <SwitchConnectionButton
+            action={context.actions.switchConnection}
+            psid={context.session.pipelineStepId}
+            connectionId={emailPasswordConnection.id}
+            authIntent="sign_up"
+            loginHint={context.auth?.providedEmail ?? context.auth?.loginHint ?? null}
+          />
         ) : null}
       </body>
     </html>
