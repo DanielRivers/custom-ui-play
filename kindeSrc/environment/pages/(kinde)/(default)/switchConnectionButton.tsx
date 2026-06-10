@@ -1,5 +1,6 @@
 import React from "react";
-import { switchConnectionClient, SwitchConnectionAction } from "./switchConnection";
+import { SwitchConnectionAction, getSwitchConnectionClientScript } from "./switchConnection";
+import { getKindeNonce } from "@kinde/infrastructure";
 
 type SwitchConnectionButtonProps = {
   action: SwitchConnectionAction;
@@ -16,27 +17,26 @@ export default function SwitchConnectionButton({
   authIntent,
   loginHint,
 }: SwitchConnectionButtonProps) {
-  const handleClick = async () => {
-    try {
-      await switchConnectionClient(action, psid, {
-        connectionId,
-        authIntent,
-        loginHint: loginHint ?? undefined,
-      });
-    } catch (error) {
-      console.error("switch connection failed", error);
-    }
-  };
-
   return (
-    <button
-      id="kinde-switch-connection"
-      type="button"
-      className="kinde-button"
-      aria-label="Switch to email password"
-      onClick={handleClick}
-    >
-      switch
-    </button>
+    <>
+      <button
+        id="kinde-switch-connection"
+        type="button"
+        className="kinde-button"
+        aria-label="Switch to email password"
+      >
+        switch
+      </button>
+      <script
+        nonce={getKindeNonce()}
+        dangerouslySetInnerHTML={{
+          __html: getSwitchConnectionClientScript(action, psid, {
+            connectionId,
+            authIntent,
+            loginHint: loginHint ?? null,
+          }),
+        }}
+      />
+    </>
   );
 }
