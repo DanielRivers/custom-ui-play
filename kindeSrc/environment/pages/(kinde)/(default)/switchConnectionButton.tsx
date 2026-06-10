@@ -1,5 +1,4 @@
-"use client";
-
+import React from "react";
 import { switchConnectionClient, SwitchConnectionAction } from "./switchConnection";
 
 type SwitchConnectionButtonProps = {
