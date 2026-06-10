@@ -8,11 +8,10 @@ import {
   getKindeNonce,
   getKindeCSRF,
   getSVGFaviconUrl,
-  setKindeDesignerCustomProperties,
-  findConnection,
+  setKindeDesignerCustomProperties
 } from "@kinde/infrastructure";
 import Component from "./background.tsx";
-import { switchConnection, findConnection } from "./switchConnection.ts";
+import { findConnection } from "./switchConnection.ts";
 
 const Layout = async ({ request, context }) => {
   if (context.auth?.providedEmail) {
@@ -91,19 +90,14 @@ const Layout = async ({ request, context }) => {
       </head>
       <body>
         <Component />
-        {emailPasswordConnection ? (
-          <form method="POST" action={switchConnection}>
-            <input type="hidden" name="csrfToken" value={getKindeCSRF()} />
-            <input
-              type="hidden"
-              name="authIntent"
-              value="sign_in"
-            />
-            <input
-              type="hidden"
-              name="connectionId"
-              value={emailPasswordConnection.id}
-            />
+        {emailPasswordConnection && context.actions?.switchConnection && context.session?.pipelineStepId ? (
+          <form method="POST" action={context.actions.switchConnection.path}>
+            <input type="hidden" name={context.actions.switchConnection.fields.psid} value={context.session.pipelineStepId} />
+            <input type="hidden" name={context.actions.switchConnection.fields.connectionId} value={emailPasswordConnection.id} />
+            <input type="hidden" name={context.actions.switchConnection.fields.authIntent} value="sign_in" />
+            {context.auth?.providedEmail ? (
+              <input type="hidden" name={context.actions.switchConnection.fields.loginHint} value={context.auth.providedEmail} />
+            ) : null}
             <button type="submit">switch</button>
           </form>
         ) : null}
