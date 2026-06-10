@@ -138,6 +138,17 @@ export async function switchConnectionClient(
     throw new Error('authIntent must be "sign_in" or "sign_up"');
   }
 
+  const getCsrfToken = () => {
+    const meta = document.querySelector('meta[name="csrf-token"]');
+    return meta?.getAttribute('content') ?? '';
+  };
+
+  const csrfToken = getCsrfToken();
+  if (!csrfToken) {
+    console.error('switch connection failed: missing csrf-token meta tag');
+    return;
+  }
+
   const form = document.createElement("form");
   form.method = "POST";
   form.action = action.path;
@@ -151,18 +162,13 @@ export async function switchConnectionClient(
     form.appendChild(input);
   };
 
+  appendField("x_csrf_token", csrfToken);
   appendField(action.fields.psid, psid);
   appendField(action.fields.connectionId, options.connectionId);
   appendField(action.fields.authIntent, options.authIntent);
 
   if (options.loginHint) {
     appendField(action.fields.loginHint, options.loginHint);
-  }
-  if (action.fields.isClickWrapAccepted && options.isClickWrapAccepted !== undefined) {
-    appendField(action.fields.isClickWrapAccepted, String(options.isClickWrapAccepted));
-  }
-  if (action.fields.isMarketingOptIn && options.isMarketingOptIn !== undefined) {
-    appendField(action.fields.isMarketingOptIn, String(options.isMarketingOptIn));
   }
 
   document.body.appendChild(form);
@@ -206,7 +212,7 @@ export function getSwitchConnectionClientScript(
 
       const form = document.createElement('form');
       form.method = 'POST';
-      form.action = action.actionUrl || '/authentication/switch_connection';
+      form.action = action.path;
       form.style.display = 'none';
 
       const appendField = (name, value) => {
