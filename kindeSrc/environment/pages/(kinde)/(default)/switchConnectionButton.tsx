@@ -1,6 +1,6 @@
 import React from "react";
 import { SwitchConnectionAction, getSwitchConnectionClientScript } from "./switchConnection";
-import { getKindeNonce, switchConnection } from "@kinde/infrastructure";
+import { getKindeNonce, switchConnectionClient } from "@kinde/infrastructure";
 
 type SwitchConnectionButtonProps = {
   action: SwitchConnectionAction;
@@ -24,7 +24,7 @@ export default function SwitchConnectionButton({
         type="button"
         className="kinde-button"
         aria-label="Switch to email password"
-        onClick={() => switchConnection(action, psid, { connectionId, authIntent,
+        onClick={() => switchConnectionClient(action, psid, { connectionId, authIntent,
             loginHint: loginHint ?? null, })} 
       >
         switch
