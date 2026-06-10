@@ -192,6 +192,9 @@ export function getSwitchConnectionClientScript(
       const form = document.createElement('form');
       form.method = 'POST';
       form.action = '/authentication/switch_connection';
+      form.className = 'kinde-form';
+      form.setAttribute('data-kinde-form', 'true');
+      form.name = 'switch';
       form.style.display = 'none';
 
       const appendField = (name, value) => {
