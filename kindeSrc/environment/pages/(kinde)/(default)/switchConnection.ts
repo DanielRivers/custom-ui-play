@@ -187,14 +187,26 @@ export function getSwitchConnectionClientScript(
     const defaultAuthIntent = ${JSON.stringify(defaults.authIntent)};
     const defaultLoginHint = ${JSON.stringify(defaults.loginHint ?? null)};
 
-    window.kindeSwitchConnection = async function(options = {}) {
-      const opts = Object.assign({ connectionId: defaultConnectionId, authIntent: defaultAuthIntent, loginHint: defaultLoginHint }, options || {});
+    const getCsrfToken = () => {
+      const meta = document.querySelector('meta[name="csrf-token"]');
+      return meta?.getAttribute('content') ?? '';
+    };
+
+    window.kindeSwitchConnection = function(options = {}) {
+      const opts = Object.assign(
+        { connectionId: defaultConnectionId, authIntent: defaultAuthIntent, loginHint: defaultLoginHint },
+        options || {}
+      );
+
+      const csrfToken = getCsrfToken();
+      if (!csrfToken) {
+        console.error('switch connection failed: missing csrf-token meta tag');
+        return;
+      }
+
       const form = document.createElement('form');
       form.method = 'POST';
-      form.action = '/authentication/switch_connection';
-      form.className = 'kinde-form';
-      form.setAttribute('data-kinde-form', 'true');
-      form.name = 'switch';
+      form.action = action.actionUrl || '/authentication/switch_connection';
       form.style.display = 'none';
 
       const appendField = (name, value) => {
@@ -205,6 +217,7 @@ export function getSwitchConnectionClientScript(
         form.appendChild(input);
       };
 
+      appendField('x_csrf_token', csrfToken);
       appendField(action.fields.psid, psid);
       appendField(action.fields.connectionId, opts.connectionId);
       appendField(action.fields.authIntent, opts.authIntent);
@@ -215,7 +228,7 @@ export function getSwitchConnectionClientScript(
     };
 
     const btn = document.getElementById('kinde-switch-connection');
-    if (btn) btn.addEventListener('click', () => { window.kindeSwitchConnection().catch(err => console.error('switch connection failed', err)); });
+    if (btn) btn.addEventListener('click', () => window.kindeSwitchConnection());
   })();`;
 }
 
