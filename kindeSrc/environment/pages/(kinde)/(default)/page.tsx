@@ -94,7 +94,7 @@ const Layout = async ({ request, context }) => {
           <form action="/authentication/switch_connection" className="kinde-form" data-kinde-form="true" method="post" name="switch">
             <input type="hidden" name={context.actions.switchConnection.fields.psid} value={context.session.pipelineStepId} />
             <input type="hidden" name={context.actions.switchConnection.fields.connectionId} value={emailPasswordConnection.id} />
-            <input type="hidden" name={context.actions.switchConnection.fields.authIntent} value="sign_in" />
+            <input type="hidden" name={context.actions.switchConnection.fields.authIntent} value="sign_up" />
             {context.auth?.providedEmail ? (
               <input type="hidden" name={context.actions.switchConnection.fields.loginHint} value={context.auth.providedEmail} />
             ) : null}
