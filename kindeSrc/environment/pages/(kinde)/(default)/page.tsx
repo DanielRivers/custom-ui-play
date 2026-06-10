@@ -91,7 +91,7 @@ const Layout = async ({ request, context }) => {
       <body>
         <Component />
         {emailPasswordConnection && context.actions?.switchConnection && context.session?.pipelineStepId ? (
-          <form action="/end_user_pages/widgets/partials/sign_up_sign_in/sso_sign_ins_form" className="kinde-form" data-kinde-form="true" method="post" name="switch">
+          <form action="/authentication/switch_connection" className="kinde-form" data-kinde-form="true" method="post" name="switch">
             <input type="hidden" name={context.actions.switchConnection.fields.psid} value={context.session.pipelineStepId} />
             <input type="hidden" name={context.actions.switchConnection.fields.connectionId} value={emailPasswordConnection.id} />
             <input type="hidden" name={context.actions.switchConnection.fields.authIntent} value="sign_in" />
