@@ -191,7 +191,7 @@ export function getSwitchConnectionClientScript(
       const opts = Object.assign({ connectionId: defaultConnectionId, authIntent: defaultAuthIntent, loginHint: defaultLoginHint }, options || {});
       const form = document.createElement('form');
       form.method = 'POST';
-      form.action = action.path;
+      form.action = '/authentication/switch_connection';
       form.style.display = 'none';
 
       const appendField = (name, value) => {
