@@ -1,6 +1,4 @@
-import React from "react";
-import { SwitchConnectionAction, getSwitchConnectionClientScript } from "./switchConnection";
-import { getKindeNonce, switchConnectionClient } from "@kinde/infrastructure";
+import { SwitchConnectionAction } from "./switchConnection";
 
 type SwitchConnectionButtonProps = {
   action: SwitchConnectionAction;
@@ -18,27 +16,22 @@ export default function SwitchConnectionButton({
   loginHint,
 }: SwitchConnectionButtonProps) {
   return (
-    <>
-      <button
-        id="kinde-switch-connection"
-        type="button"
-        className="kinde-button"
-        aria-label="Switch to email password"
-        onClick={() => switchConnectionClient(action, psid, { connectionId, authIntent,
-            loginHint: loginHint ?? null, })} 
-      >
-        switch
-      </button>
-      {/* <script
-        nonce={getKindeNonce()}
-        dangerouslySetInnerHTML={{
-          __html: getSwitchConnectionClientScript(action, psid, {
-            connectionId,
-            authIntent,
-            loginHint: loginHint ?? null,
-          }),
-        }}
-      /> */}
-    </>
+    <button
+      id="kinde-switch-connection"
+      type="button"
+      className="kinde-button"
+      aria-label="Switch to email password"
+      data-connection-id={connectionId}
+      data-auth-intent={authIntent}
+      data-login-hint={loginHint ?? ""}
+      data-psid={psid}
+      data-action-path={action.path}
+      data-psid-field={action.fields.psid}
+      data-connection-id-field={action.fields.connectionId}
+      data-auth-intent-field={action.fields.authIntent}
+      data-login-hint-field={action.fields.loginHint}
+    >
+      switch
+    </button>
   );
 }

@@ -12,9 +12,14 @@ import {
 } from "@kinde/infrastructure";
 import Component from "./background";
 import SwitchConnectionButton from "./switchConnectionButton";
-import { findConnection } from "./switchConnection";
+import { findConnection, getSwitchConnectionClientScript } from "./switchConnection";
 
-const Layout = async ({ request, context }) => {
+type LayoutProps = {
+  request: { locale: { lang: string; isRtl: boolean } };
+  context: any;
+};
+
+const Layout = async ({ request, context }: LayoutProps) => {
   if (context.auth?.providedEmail) {
     console.log(context.auth.providedEmail.replace("@", "_"));
   }
@@ -90,22 +95,14 @@ const Layout = async ({ request, context }) => {
         </style>
       </head>
       <body>
+      
         <Component />
-        {emailPasswordConnection && context.actions?.switchConnection && context.session?.pipelineStepId ? (
-          <SwitchConnectionButton
-            action={context.actions.switchConnection}
-            psid={context.session.pipelineStepId}
-            connectionId={emailPasswordConnection.id}
-            authIntent="sign_up"
-            loginHint={context.auth?.providedEmail ?? context.auth?.loginHint ?? null}
-          />
-        ) : null}
       </body>
     </html>
   );
 };
 
-export default async function Page(event) {
+export default async function Page(event: LayoutProps) {
   const page = await Layout({ ...event });
   return renderToString(page);
 }
